@@ -130,4 +130,4 @@ dmypy.json
 
 
 installments_payments.csv
-installments_payments_sorted_by_days_installments.csv
+installments_payments_sorted_by_days_installment.csv
