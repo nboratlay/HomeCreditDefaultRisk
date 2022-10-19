@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+installments_payments.csv
+installments_payments_sorted_by_days_installment.csv
