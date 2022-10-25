@@ -14,7 +14,7 @@ def univariate_graph(data, var, path, **kwargs):
     specify the strategy argument for the KBinsDiscretizer.
     The outcome of the variable is a plot that shows the amount of observations in each bucket as bars and the share of defaults as a line.
     '''
-    df = data.copy().reset_index(drop = True)
+    df = data[['TARGET', var]].dropna().copy().reset_index(drop = True)
     if type(df[var][0]) == str:
         df = df.groupby(var).agg({
             'TARGET' : [np.mean, len], 
@@ -23,6 +23,7 @@ def univariate_graph(data, var, path, **kwargs):
         df[var] = KBinsDiscretizer(**kwargs, 
                                    encode = 'ordinal'
                                   ).fit_transform(df[[var]])
+        df[var] = [str(d) for d in df[var]]
         df = df.groupby(var).agg({
             'TARGET' : [np.mean, len],
             })
