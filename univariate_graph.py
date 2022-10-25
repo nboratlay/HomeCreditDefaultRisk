@@ -6,11 +6,12 @@ from sklearn.preprocessing import (
 import numpy as np
 import matplotlib.pyplot as plt
 
-def univariate_graph(data, var, **kwargs):
+def univariate_graph(data, var, path, **kwargs):
     '''
     This function takes at least a dataset and a variable name of the dataset. The variable name should be the feature you are looking at.
     It then groups by the variable values and calculates the amount of observations in the variable's categories and the percentage of 
-    defaults in each category. If your variable is not categorical, it takes on an extra argument, n_bins, to make it categorical.
+    defaults in each category. If your variable is not categorical, it takes on an extra argument, n_bins, to make it categorical. Also 
+    specify the strategy argument for the KBinsDiscretizer.
     The outcome of the variable is a plot that shows the amount of observations in each bucket as bars and the share of defaults as a line.
     '''
     df = data.copy().reset_index(drop = True)
@@ -20,8 +21,7 @@ def univariate_graph(data, var, **kwargs):
             })
     else:
         df[var] = KBinsDiscretizer(**kwargs, 
-                                   encode = 'ordinal',
-                                   strategy = 'uniform',
+                                   encode = 'ordinal'
                                   ).fit_transform(df[[var]])
         df = df.groupby(var).agg({
             'TARGET' : [np.mean, len],
@@ -57,10 +57,10 @@ def univariate_graph(data, var, **kwargs):
     ax2.tick_params(axis = 'y', 
                     labelcolor = 'red') 
 #     save figure
-    plt.savefig(var+'.png')
+    plt.savefig(path+var+'.png')
 #     show plot
     # plt.show() 
 
 
 if __name__ == '__main__':
-    univariate_graph(X_train, 'NAME_EDUCATION_TYPE')
+    univariate_graph(data_containing_var_and_TARGET, 'NAME_EDUCATION_TYPE')
