@@ -6,7 +6,7 @@ from sklearn.preprocessing import (
 import numpy as np
 import matplotlib.pyplot as plt
 
-def univariate_graph(data, var, path, **kwargs):
+def univariate_graph(data, var, path, rota = 45, **kwargs):
     '''
     This function takes at least a dataset and a variable name of the dataset. The variable name should be the feature you are looking at.
     It then groups by the variable values and calculates the amount of observations in the variable's categories and the percentage of 
@@ -15,13 +15,13 @@ def univariate_graph(data, var, path, **kwargs):
     The outcome of the variable is a plot that shows the amount of observations in each bucket as bars and the share of defaults as a line.
     '''
     df = data[['TARGET', var]].dropna().copy().reset_index(drop = True)
-    if type(df[var][0]) == str:
+    if (type(df.loc[0, var]) is str) or (df[var].nunique() <= 10):
         df = df.groupby(var).agg({
             'TARGET' : [np.mean, len], 
             })
     else:
         df[var] = KBinsDiscretizer(**kwargs, 
-                                   encode = 'ordinal'
+                                   encode = 'ordinal',
                                   ).fit_transform(df[[var]])
         df[var] = [str(d) for d in df[var]]
         df = df.groupby(var).agg({
@@ -33,7 +33,7 @@ def univariate_graph(data, var, path, **kwargs):
     ax1.set_title(var.replace('_', ' '))
 #     bar plot
     ax1.tick_params(axis = 'x', 
-                    rotation = 45,
+                    rotation = rota,
                    )
     ax1.set_ylabel('Anzahl', 
                    color = 'blue',
@@ -64,4 +64,4 @@ def univariate_graph(data, var, path, **kwargs):
 
 
 if __name__ == '__main__':
-    univariate_graph(data_containing_var_and_TARGET, 'NAME_EDUCATION_TYPE')
+    univariate_graph(data_containing_var_and_TARGET, 'NAME_EDUCATION_TYPE', "")
